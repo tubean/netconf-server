@@ -10,46 +10,46 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 
 public abstract class AbstractQuery extends RPCElement implements IQuery {
-	private String messageId;
-	private Operation operation;
+    private String messageId;
+    private Operation operation;
 
-	protected AbstractQuery(Operation operation) {
-		this.operation = operation;
-	}
+    protected AbstractQuery(Operation operation) {
+        this.operation = operation;
+    }
 
-	public String toXML() {
-		StringBuilder str = new StringBuilder();
+    public String toXML() {
+        StringBuilder str = new StringBuilder();
 
-		str.append("<rpc message-id=\"" + messageId + "\">");
+        str.append("<rpc message-id=\"" + messageId + "\">");
 
-		StringWriter out = new StringWriter();
-		try {
-			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(innerXml()), new StreamResult(out));
-		} catch (TransformerException e) {
-			throw new RuntimeException(e);
-		}
+        StringWriter out = new StringWriter();
+        try {
+            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(innerXml()), new StreamResult(out));
+        } catch (TransformerException e) {
+            throw new RuntimeException(e);
+        }
 
-		str.append(out.toString());
-		str.append("</rpc>");
+        str.append(out.toString());
+        str.append("</rpc>");
 
-		return str.toString();
-	}
+        return str.toString();
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public Operation getOperation() {
-		return operation;
-	}
+    public Operation getOperation() {
+        return operation;
+    }
 
-	public RPCElement getRpcElement() {
-		return this;
-	}
+    public RPCElement getRpcElement() {
+        return this;
+    }
 
-	protected abstract Node innerXml();
+    protected abstract Node innerXml();
 }

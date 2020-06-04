@@ -4,13 +4,13 @@ import server.rpc.Operation;
 import server.rpc.RPCElement;
 
 public interface IQuery {
-	String toXML();
+    String toXML();
 
-	String getMessageId();
+    String getMessageId();
 
-	void setMessageId(String messageId);
+    void setMessageId(String messageId);
 
-	Operation getOperation();
+    Operation getOperation();
 
-	RPCElement getRpcElement();
+    RPCElement getRpcElement();
 }

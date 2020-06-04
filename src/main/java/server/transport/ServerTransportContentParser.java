@@ -8,9 +8,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.ext.DefaultHandler2;
 import server.error.NetconfProtocolException;
 import server.messageQueue.MessageQueue;
-import server.netconf.NetconfSubsystem;
-import server.rpc.*;
 import server.rpc.Error;
+import server.rpc.*;
 
 import java.util.ArrayList;
 
@@ -88,9 +87,9 @@ public class ServerTransportContentParser extends DefaultHandler2 {
         // return;
 
         if (insideDataTag) {
-            dataTagContent.append("<" + localName + ">");
+            dataTagContent.append("<").append(localName).append(">");
         } else if (insideSoftwareInfoTag) {
-            softwareInfoTagContent.append("<" + localName + ">");
+            softwareInfoTagContent.append("<").append(localName).append(">");
         } else if (insideOperationTag) {
             if (localName.equalsIgnoreCase("target")) {
                 insideTarget = true;
@@ -288,16 +287,16 @@ public class ServerTransportContentParser extends DefaultHandler2 {
         // return;
 
         if (insideDataTag && !localName.equalsIgnoreCase("data")) {
-            dataTagContent.append("</" + localName + ">");
+            dataTagContent.append("</").append(localName).append(">");
         } else if (insideSoftwareInfoTag && !localName.equalsIgnoreCase("software-information")) {
-            softwareInfoTagContent.append("</" + localName + ">");
+            softwareInfoTagContent.append("</").append(localName).append(">");
         } else if (insideOperationTag) {
             if (localName.equalsIgnoreCase("target")) {
                 insideTarget = false;
             } else if (localName.equalsIgnoreCase("config")) {
                 insideConfig = false;
             } else if (insideConfig) {
-                operationTagContent.append("</" + localName + ">");
+                operationTagContent.append("</").append(localName).append(">");
             }
         }
 
@@ -433,7 +432,7 @@ public class ServerTransportContentParser extends DefaultHandler2 {
             // software-information is the root node and leaving it in place
             // makes gives us a well-formed XML document rather than multiple
             // top-level nodes.
-            softwareInfoTagContent.append("</" + localName + ">");
+            softwareInfoTagContent.append("</").append(localName).append(">");
             reply.setContain(softwareInfoTagContent.toString());
             reply.setContainName("software-information");
             softwareInfoTagContent = new StringBuffer();

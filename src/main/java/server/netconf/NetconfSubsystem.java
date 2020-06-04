@@ -2,7 +2,6 @@ package server.netconf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.SessionAware;
@@ -96,35 +95,35 @@ public class NetconfSubsystem implements Command, SessionAware {
         this.session = session;
     }
 
-	public void start(ChannelSession channelSession, Environment environment) throws IOException {
-		this.env = env;
+    public void start(ChannelSession channelSession, Environment environment) throws IOException {
+        this.env = env;
 
-		// initialize Netconf processor
-		netconfProcessor = new NetconfProcessor(in, out, err, callback);
-		netconfProcessor.setMessageStore(messageStore);
-		netconfProcessor.setBehaviors(behaviourContainer);
+        // initialize Netconf processor
+        netconfProcessor = new NetconfProcessor(in, out, err, callback);
+        netconfProcessor.setMessageStore(messageStore);
+        netconfProcessor.setBehaviors(behaviourContainer);
 
-		log.info("Starting new client thread...");
-		(clientThread = new Thread(netconfProcessor, "Client thread")).start();
-	}
+        log.info("Starting new client thread...");
+        (clientThread = new Thread(netconfProcessor, "Client thread")).start();
+    }
 
-	public void destroy(ChannelSession channelSession) throws Exception {
-		netconfProcessor.waitAndInterruptThreads();
-		try {
-			clientThread.join(2000);
-		} catch (InterruptedException e) {
-			log.warn("Error joining Client thread" + e.getMessage());
-		}
-		clientThread.interrupt();
-		log.info("Netconf Subsystem destroyed");
-	}
+    public void destroy(ChannelSession channelSession) throws Exception {
+        netconfProcessor.waitAndInterruptThreads();
+        try {
+            clientThread.join(2000);
+        } catch (InterruptedException e) {
+            log.warn("Error joining Client thread" + e.getMessage());
+        }
+        clientThread.interrupt();
+        log.info("Netconf Subsystem destroyed");
+    }
 
-	/**
+    /**
      * Netconf Subsystem Factory
      *
      * @author Julio Carlos Barrera
      */
-    public static class Factory implements  SubsystemFactory {
+    public static class Factory implements SubsystemFactory {
         private static final Log log = LogFactory.getLog(Factory.class);
         private MessageStore messageStore = null;
         private BehaviourContainer behaviourContainer = null;

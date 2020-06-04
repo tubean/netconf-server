@@ -1,12 +1,10 @@
 package server;
-import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.SshServer;
-import org.apache.sshd.server.command.Command;
-import org.apache.sshd.server.subsystem.SubsystemFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
+import org.apache.sshd.server.subsystem.SubsystemFactory;
 import server.exceptions.ServerException;
 import server.netconf.NetconfSubsystem;
 import server.rpc.RPCElement;
@@ -15,7 +13,6 @@ import server.ssh.AlwaysTruePasswordAuthenticator;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -116,7 +113,6 @@ public class Server implements MessageStore, BehaviourContainer {
         sshd.setSubsystemFactories(subsystemFactories);
 
 
-
         log.info("server.Server configured.");
     }
 
@@ -149,7 +145,7 @@ public class Server implements MessageStore, BehaviourContainer {
         log.info("server.Server started.");
     }
 
-    public void stopServer() throws IOException{
+    public void stopServer() throws IOException {
         log.info("Stopping server...");
         sshd.stop();
         log.info("server.Server stopped.");

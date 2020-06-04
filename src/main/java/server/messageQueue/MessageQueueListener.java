@@ -4,5 +4,5 @@ import server.rpc.RPCElement;
 
 public interface MessageQueueListener {
 
-	public void receiveRPCElement(RPCElement element);
+    void receiveRPCElement(RPCElement element);
 }
