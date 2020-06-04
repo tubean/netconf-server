@@ -2,8 +2,7 @@ package server.messageQueue;
 
 import java.util.LinkedHashMap;
 import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
@@ -18,8 +17,8 @@ public class MessageQueue {
 	LinkedHashMap<String, RPCElement>	queue;
 
 	public MessageQueue() {
-		listeners = new Vector<MessageQueueListener>();
-		queue = new LinkedHashMap<String, RPCElement>();
+		listeners = new Vector<>();
+		queue = new LinkedHashMap<>();
 	}
 
 	/**
@@ -113,30 +112,28 @@ public class MessageQueue {
 	public RPCElement blockingConsumeById(String messageId, long timeout) throws Exception {
 
 		final String messageIdFinal = messageId;
-		Callable<RPCElement> consumeCaller = new Callable<RPCElement>() {
-			public RPCElement call() throws Exception {
-				RPCElement element;
-				synchronized (queue) {
-					while ((element = consumeById(messageIdFinal)) == null) {
-						try {
-							log.debug("Waiting (" + messageIdFinal + ")...");
-							queue.wait();
-						} catch (InterruptedException e) {
-							// Do nothing. It's probably a timeout.
-						}
+		Callable<RPCElement> consumeCaller = () -> {
+			RPCElement element;
+			synchronized (queue) {
+				while ((element = consumeById(messageIdFinal)) == null) {
+					try {
+						log.debug("Waiting (" + messageIdFinal + ")...");
+						queue.wait();
+					} catch (InterruptedException e) {
+						// Do nothing. It's probably a timeout.
 					}
 				}
-				return element;
 			}
+			return element;
 		};
 
 		if (timeout <= 0) {
 			return consumeCaller.call();
 		}
 
-		SimpleTimeLimiter timeLimiter = new SimpleTimeLimiter();
+		SimpleTimeLimiter timeLimiter = SimpleTimeLimiter.create(Executors.newSingleThreadExecutor());
 		try {
-			return timeLimiter.callWithTimeout(consumeCaller, timeout, TimeUnit.MILLISECONDS, true);
+			return timeLimiter.callWithTimeout(consumeCaller, timeout, TimeUnit.MILLISECONDS);
 		} catch (UncheckedTimeoutException e) {
 			log.debug("BlockingConsumeById(messageId=" + messageId + ") failed due to timeout.", e);
 			throw e;

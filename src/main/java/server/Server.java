@@ -1,13 +1,11 @@
-package server;//import org.apache.sshd.common.NamedFactory;
-//import org.apache.sshd.server.SshServer;
-//import org.apache.sshd.server.command.Command;
-//import org.apache.sshd.server.subsystem.SubsystemFactory;
+package server;
+import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.subsystem.SubsystemFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.Command;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import server.exceptions.ServerException;
 import server.netconf.NetconfSubsystem;
@@ -17,6 +15,7 @@ import server.ssh.AlwaysTruePasswordAuthenticator;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,7 +72,7 @@ public class Server implements MessageStore, BehaviourContainer {
      */
     public static Server createServerStoringMessages(int listeningPort) {
         Server server = new Server();
-        server.messages = new ArrayList<RPCElement>();
+        server.messages = new ArrayList<>();
         server.storeMessages = true;
 
         server.initializeServer("localhost", listeningPort);
@@ -89,7 +88,7 @@ public class Server implements MessageStore, BehaviourContainer {
      */
     public static Server createServerStoringMessages(String host, int listeiningPort) {
         Server server = new Server();
-        server.messages = new ArrayList<RPCElement>();
+        server.messages = new ArrayList<>();
         server.storeMessages = true;
 
         server.initializeServer(host, listeiningPort);
@@ -106,22 +105,24 @@ public class Server implements MessageStore, BehaviourContainer {
         log.info("Host: '" + host + "', listenig port: " + listeningPort);
 
         sshd.setPasswordAuthenticator(new AlwaysTruePasswordAuthenticator());
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(""));
+        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider());
 
-        List<NamedFactory<Command>> subsystemFactories = new ArrayList<NamedFactory<Command>>();
+//        List<NamedFactory<Command>> subsystemFactories = new ArrayList<NamedFactory<Command>>();
+//        subsystemFactories.add(NetconfSubsystem.Factory.createFactory(this, this));
+//        sshd.setSubsystemFactories(subsystemFactories);
+
+        List<SubsystemFactory> subsystemFactories = new ArrayList<>();
         subsystemFactories.add(NetconfSubsystem.Factory.createFactory(this, this));
         sshd.setSubsystemFactories(subsystemFactories);
 
-//        List<SubsystemFactory> subsystemFactories = new ArrayList<SubsystemFactory>();
-//        subsystemFactories.add(NetconfSubsystem.Factory.createFactory(this, this));
-//        sshd.setSubsystemFactories(subsystemFactories);
+
 
         log.info("server.Server configured.");
     }
 
     public void defineBehaviour(Behaviour behaviour) {
         if (behaviours == null) {
-            behaviours = new ArrayList<Behaviour>();
+            behaviours = new ArrayList<>();
         }
         synchronized (behaviours) {
             behaviours.add(behaviour);
@@ -148,14 +149,9 @@ public class Server implements MessageStore, BehaviourContainer {
         log.info("server.Server started.");
     }
 
-    public void stopServer() {
+    public void stopServer() throws IOException{
         log.info("Stopping server...");
-        try {
-            sshd.stop();
-        } catch (InterruptedException e) {
-            log.error("Error stopping server!");
-            throw new ServerException("Error stopping server", e);
-        }
+        sshd.stop();
         log.info("server.Server stopped.");
     }
 

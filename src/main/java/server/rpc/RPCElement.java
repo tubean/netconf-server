@@ -1,6 +1,6 @@
 package server.rpc;
 
-import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration2.CompositeConfiguration;
 
 public class RPCElement implements java.io.Serializable {
 

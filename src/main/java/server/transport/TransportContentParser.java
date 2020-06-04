@@ -96,7 +96,7 @@ public class TransportContentParser extends DefaultHandler2 {
 
 		if (localName.equalsIgnoreCase("hello")) {
 			hello = new Hello();
-			capabilities = new ArrayList<Capability>();
+			capabilities = new ArrayList<>();
 		}
 		// if (localName.equalsIgnoreCase("capabilities")) {
 		// insideCapabilityTag = false;

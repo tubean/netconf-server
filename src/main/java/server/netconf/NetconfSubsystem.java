@@ -3,12 +3,13 @@ package server.netconf;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.SessionAware;
 import org.apache.sshd.server.channel.ChannelSession;
+import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.subsystem.SubsystemFactory;
 import server.BehaviourContainer;
 import server.MessageStore;
 
@@ -123,7 +124,7 @@ public class NetconfSubsystem implements Command, SessionAware {
      *
      * @author Julio Carlos Barrera
      */
-    public static class Factory implements NamedFactory<Command> {
+    public static class Factory implements  SubsystemFactory {
         private static final Log log = LogFactory.getLog(Factory.class);
         private MessageStore messageStore = null;
         private BehaviourContainer behaviourContainer = null;
@@ -144,6 +145,11 @@ public class NetconfSubsystem implements Command, SessionAware {
 
         public String getName() {
             return "netconf";
+        }
+
+        @Override
+        public Command createSubsystem(ChannelSession channelSession) throws IOException {
+            return new NetconfSubsystem(messageStore, behaviourContainer);
         }
     }
 

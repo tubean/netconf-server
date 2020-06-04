@@ -17,6 +17,7 @@ import server.transport.ServerTransportContentParser;
 
 import org.apache.commons.io.IOUtils;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,7 +165,7 @@ public class NetconfProcessor implements Runnable, MessageQueueListener {
         serverHello.setSessionId(sessionId);
 
         // add only base capability
-        ArrayList<Capability> capabilities = new ArrayList<Capability>();
+        ArrayList<Capability> capabilities = new ArrayList<>();
         capabilities.add(Capability.BASE);
         serverHello.setCapabilities(capabilities);
 
@@ -173,7 +174,7 @@ public class NetconfProcessor implements Runnable, MessageQueueListener {
 
     public void sendFakeConfig(Query configQuery) throws IOException {
         InputStream configFileIs = this.getClass().getResourceAsStream("/router_configs/router_config_A.xml");
-        Reply reply = ReplyFactory.newGetConfigReply(configQuery, null, IOUtils.toString(configFileIs));
+        Reply reply = ReplyFactory.newGetConfigReply(configQuery, null, IOUtils.toString(configFileIs, Charset.defaultCharset()));
         sendReply(reply);
     }
 

@@ -19,8 +19,8 @@ public class Reply extends RPCElement {
     HashMap<String, String> attributes;
 
     public Reply() {
-        errors = new Vector<Error>();
-        attributes = new HashMap<String, String>();
+        errors = new Vector<>();
+        attributes = new HashMap<>();
     }
 
     public boolean isOk() {
