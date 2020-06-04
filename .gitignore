@@ -4,3 +4,4 @@ webpack-cache/
 dist/
 email_template_html/.vs/
 .vs/
+/target/
